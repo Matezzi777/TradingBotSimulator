@@ -53,8 +53,10 @@ def generate_realistic_price(prices, nb_trades) -> float:
 		if (total_count < random_pick <= total_count + p[1]):
 			return (p[0])
 		total_count += p[1]
+
+file_path: str = "trades.json"
 try:
-	file = open("trades.json", encoding="utf-8")
+	file = open(file_path, encoding="utf-8")
 except:
 	file_path: str = str(input("\nEntrez le path vers le fichier de sauvegarde .json : "))
 	try:
