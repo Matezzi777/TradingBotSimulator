@@ -92,38 +92,40 @@ print(f"Winrate des positions prises  : {(winrate * 100):.2f}%")
 print(f"Repartition des prix d'entree :")
 for p in prices:
 	print(f"	- {p[0]:.2f}$ : {p[1]:6} ({((float(p[1])/float(number_trades)) * 100):.2f}%)")
+print(" ")
 
-initial_cash: float = float(input("\nEntrez la somme de depart                          : "))
-if initial_cash <= 0:
+while (True):
+	initial_cash: float = float(input("Entrez la somme de depart                          : "))
+	if (initial_cash > 0):
+		break
 	if (initial_cash == 0):
 		print("ERROR : Le cash de depart ne peut pas etre nul.")
-	if (initial_cash < 0):
+	else:
 		print("ERROR : Le cash de depart ne peut pas etre negatif.")
-	exit()
-bet_percent: int = int(input("Entrez le pourcentage de la somme mise par pari    : "))
-if (bet_percent <= 0 or bet_percent > 100):
+
+while (True):
+	bet_percent: int = int(input("Entrez le pourcentage de la somme mise par pari    : "))
+	if (0 < bet_percent <=100):
+		break
 	if (bet_percent == 0):
-		print("ERROR : Le pourcentage mise par pari ne peut pas etre nul.")
+		print("ERROR : Le pourcentage mise par pari ne peut pas etre nul.")	
 	if (bet_percent < 0):
 		print("ERROR : Le pourcentage mise par pari ne peut pas etre negatif.")
-	if (bet_percent == 0):
+	if (bet_percent > 100):
 		print("ERROR : Le pourcentage mise par pari ne peut pas etre superieur a 100%.")
-	exit()
 bet_rate: float = float(float(bet_percent) / float(100))
-windows: int = int(input("Entrez le nombre de paris sur la periode a simuler : "))
-if (windows <= 0):
-	if (windows == 0):
-		print("ERROR : Le nombre de paris par periode ne peut pas etre nul.")
-	if (windows < 0):
-		print("ERROR : Le nombre de paris par periode ne peut pas etre negatif.")
-	exit()
-nb_simulations: int = int(input("Entrez le nombre de simulations a lancer           : "))
-if (nb_simulations <= 0):
-	if (nb_simulations == 0):
-		print("ERROR : Le nombre de simulations ne peut pas etre nul.")
-	if (nb_simulations < 0):
-		print("ERROR : Le nombre de simulations ne peut pas etre negatif.")
-	exit()
+
+while (True):
+	windows: int = int(input("Entrez le nombre de trades sur la periode a simuler : "))
+	if (windows > 0):
+		break
+	print("ERROR : Minimum 1 trade.")
+
+while (True):
+	nb_simulations: int = int(input("Entrez le nombre de simulations a lancer           : "))
+	if (nb_simulations >= 2):
+		break
+	print("ERROR : Minimum 2 simulations.")
 
 print("\n============================= SIMULATION ==============================")
 sim_max: float = -1
@@ -168,24 +170,6 @@ sim_q1: float = simulations_results[int(float(float(nb_simulations)/float(4)))]
 sim_med: float = simulations_results[int(float(float(nb_simulations)/float(2)))]
 sim_q3: float = simulations_results[int(float(float(nb_simulations)/float(4)) * 3)]
 sim_d9: float = simulations_results[int(float(float(nb_simulations)/float(10)) * 9)]
-
-# x = [i / (len(simulations_results) - 1) * 100 for i in range(len(simulations_results))]
-# y = simulations_results
-# renta_line = next((i for i, sim in enumerate(simulations_results) if sim >= initial_cash), None)
-
-# plt.style.use("dark_background")
-# plt.plot(x, y, color="red", label="Prix")
-# plt.axhline(y=initial_cash, color="blue", linestyle="--", label="Cash de depart")
-# if renta_line is not None:
-# 	renta_percent = renta_line / (len(simulations_results) - 1) * 100
-# 	plt.axvline(x=renta_percent, color="green", linestyle=":", label="Debut rentabilite")
-# plt.xlabel("Classement de la simulation (en %)")
-# plt.ylabel("Prix (en $)")
-# plt.title(f"Projections sur la base de l'historique apres {nb_simulations} simulations")
-# plt.legend()
-# plt.grid()
-# plt.tight_layout(rect=[0, 0, 0.84, 1])
-# plt.savefig("projections.png", dpi=150)
 
 x = [i / (len(simulations_results) - 1) * 100 for i in range(len(simulations_results))]
 y = simulations_results
@@ -347,8 +331,6 @@ for text in legend.get_texts():
 	text.set_color("white")
 
 plt.tight_layout()
-plt.savefig("projections.png", dpi=180, facecolor=fig.get_facecolor())
-
 print("\n============================== RESULTATS ==============================")
 print(f"Nombre de simulations effectuees         : {nb_simulations}")
 print(f"Pourcentage de simulations WIN/DRAW/LOSS : {(sim_win / nb_simulations * 100):04.2f}% / {(sim_draw/nb_simulations * 100):04.2f}% / {(sim_loss/nb_simulations * 100):04.2f}%")
@@ -360,5 +342,14 @@ print(f"Q2 (Mid)          : {sim_med:.2f}$ ({((sim_med / initial_cash * 100) - 1
 print(f"Q3 (Top 25%)      : {sim_q3:.2f}$ ({((sim_q3 / initial_cash * 100) - 100):+.2f}%)")
 print(f"D9 (Top 10%)      : {sim_d9:.2f}$ ({((sim_d9 / initial_cash * 100) - 100):+.2f}%)")
 print(f"Meilleur resultat : {sim_max:.2f}$ ({((sim_max / initial_cash * 100) - 100):+.2f}%)\n")
-plt.show()
-print("Graphique enregistre sous : \"projections.png\"")
+
+try:
+	plt.savefig("projections.png", dpi=180, facecolor=fig.get_facecolor())
+	print("Graphique enregistre sous : \"projections.png\"")
+except:
+	print("ERROR : Impossible de sauvegarder projections.png.")
+
+try:
+	plt.show()
+except:
+	print("ERROR : Impossible d'afficher projections.png")
